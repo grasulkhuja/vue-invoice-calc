@@ -10,3 +10,9 @@ export const addProduct = async (product: Product): Promise<Product> => {
   const { data } = await axios.post('/products', product)
   return data
 }
+
+export const deleteProducts = async (products: Product[]): Promise<boolean> => {
+  const ids = products.map((product) => product.id)
+  await ids.forEach((id) => axios.delete(`/products/${id}`))
+  return true
+}
