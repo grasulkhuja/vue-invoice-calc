@@ -59,7 +59,6 @@
                 </v-row>
               </v-form>
             </validation-observer>
-
             <v-data-table
               v-model="selectedProducts"
               :headers="productTableHeaders"
@@ -84,12 +83,33 @@
         </v-card>
       </v-col>
     </v-row>
+    <v-snackbar
+      v-model="notification.show"
+      v-for="notification in notifications"
+      :key="notification.id"
+      :timeout="3000"
+      :color="notification.type"
+    >
+      {{ notification.message }}
+      <template v-slot:action="{ attrs }">
+        <v-btn
+          outlined
+          :color="notification.type"
+          text
+          v-bind="attrs"
+          @click="notification.show = false"
+        >
+          Close
+        </v-btn>
+      </template>
+    </v-snackbar>
   </v-container>
 </template>
 
 <script lang="ts">
 import { mapGetters, mapState } from 'vuex'
 import { Product } from '@/types/product'
+import { NotificationType } from '@/types/notification'
 import { extend, ValidationObserver, ValidationProvider, setInteractionMode } from 'vee-validate'
 import { required, numeric } from 'vee-validate/dist/rules'
 import Vue from 'vue'
@@ -107,6 +127,7 @@ extend('numeric', {
 
 declare module 'vue/types/vue' {
   interface Vue {
+    notifications: NotificationType[]
     fetchAllProducts: () => void
   }
 }
@@ -115,6 +136,7 @@ export default Vue.extend({
   name: 'InvoiceCalculator',
   data() {
     return {
+      notifications: [] as NotificationType[],
       selectedProducts: [] as Product[],
     }
   },
@@ -125,6 +147,12 @@ export default Vue.extend({
     async addProduct(): Promise<void> {
       await this.$store.dispatch('addProduct', this.product)
       await this.$store.dispatch('clearProduct')
+      this.notifications.push({
+        id: this.notifications.length,
+        type: 'success',
+        message: 'Product added successfully',
+        show: true,
+      })
     },
     summaryForEachProduct(product: Product): number {
       return product.quantity * product.price
