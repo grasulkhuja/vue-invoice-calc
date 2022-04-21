@@ -1,12 +1,12 @@
 # Invoice calculator
 Simple invoice calculator written in [Javascript](https://developer.mozilla.org/en-US/docs/Web/JavaScript) using 
-[Vue.JS](https://https://vuejs.org/), [Vuex](https://vuex.vuejs.org/), [Vuetify](https://vuetifyjs.com/), 
+[Vue.JS](https://vuejs.org/), [Vuex](https://vuex.vuejs.org/), [Vuetify](https://vuetifyjs.com/), 
 [TypeScript](https://www.typescriptlang.org/)
 
 ## Pre-Requests
 ```
-  1. NodeJS (14.17.3)
-  2. @vue/cli (5.0.4)
+1. NodeJS (14.17.3)
+2. @vue/cli (5.0.4)
 ```
 ## Project setup
 ```
