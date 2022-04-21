@@ -5,7 +5,7 @@
         <v-card>
           <v-card-title>Vue Invoice Calculator</v-card-title>
           <v-card-text>
-            <validation-observer ref="isProductValid" v-slot="{ invalid }">
+            <validation-observer ref="observer" v-slot="{ invalid }">
               <v-form @submit.prevent="addProduct">
                 <v-row>
                   <v-col cols="12" md="6">
@@ -67,13 +67,11 @@
               disable-pagination
               hide-default-footer
               show-select
-            >
-              <template v-slot:[`item.summary`]="{ item }">
-                {{ summaryForEachProduct(item) }}
-              </template>
-            </v-data-table>
+            />
             <v-card-actions>
-              <v-btn outlined :disabled="!selectedProducts.length">Delete</v-btn>
+              <v-btn outlined :disabled="!selectedProducts.length" @click.prevent="deleteProducts">
+                Delete
+              </v-btn>
               <v-spacer />
               <p>
                 Total: $ <span>{{ total ? total : 0 }}</span>
@@ -92,15 +90,7 @@
     >
       {{ notification.message }}
       <template v-slot:action="{ attrs }">
-        <v-btn
-          outlined
-          :color="notification.type"
-          text
-          v-bind="attrs"
-          @click="notification.show = false"
-        >
-          Close
-        </v-btn>
+        <v-btn outlined text v-bind="attrs" @click="notification.show = false" dark> Close </v-btn>
       </template>
     </v-snackbar>
   </v-container>
@@ -109,10 +99,9 @@
 <script lang="ts">
 import { mapGetters, mapState } from 'vuex'
 import { Product } from '@/types/product'
-import { NotificationType } from '@/types/notification'
 import { extend, ValidationObserver, ValidationProvider, setInteractionMode } from 'vee-validate'
 import { required, numeric } from 'vee-validate/dist/rules'
-import Vue from 'vue'
+import Vue, { VueConstructor } from 'vue'
 
 setInteractionMode('eager')
 
@@ -127,16 +116,22 @@ extend('numeric', {
 
 declare module 'vue/types/vue' {
   interface Vue {
-    notifications: NotificationType[]
     fetchAllProducts: () => void
   }
 }
 
-export default Vue.extend({
+export default (
+  Vue as VueConstructor<
+    Vue & {
+      $refs: {
+        observer: InstanceType<typeof ValidationObserver>
+      }
+    }
+  >
+).extend({
   name: 'InvoiceCalculator',
   data() {
     return {
-      notifications: [] as NotificationType[],
       selectedProducts: [] as Product[],
     }
   },
@@ -146,29 +141,26 @@ export default Vue.extend({
     },
     async addProduct(): Promise<void> {
       await this.$store.dispatch('addProduct', this.product)
-      await this.$store.dispatch('clearProduct')
-      this.notifications.push({
-        id: this.notifications.length,
+      await this.$store.commit('CLEAR_PRODUCT')
+      this.$refs.observer.reset()
+      this.$store.dispatch('addNotification', {
         type: 'success',
         message: 'Product added successfully',
-        show: true,
       })
     },
-    summaryForEachProduct(product: Product): number {
-      return product.quantity * product.price
+    async deleteProducts(): Promise<void> {
+      await this.$store.dispatch('deleteProducts', this.selectedProducts)
+      this.selectedProducts = []
     },
   },
   computed: {
     ...mapState({ product: 'product' }),
     ...mapGetters({
+      total: 'total',
       products: 'products',
       productTableHeaders: 'productTableHeaders',
+      notifications: 'notifications',
     }),
-    total() {
-      return this.products.reduce((total: number, product: Product) => {
-        return total + product.price * product.quantity
-      }, 0)
-    },
   },
   created() {
     this.fetchAllProducts()

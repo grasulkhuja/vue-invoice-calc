@@ -1,12 +1,14 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import { Product } from '@/types/product'
-import { getAllProducts, addProduct } from '@/services/product.service'
+import { getAllProducts, addProduct, deleteProducts } from '@/services/product.service'
+import { NotificationType } from '@/types/notification'
 
 Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
+    notifications: [] as NotificationType[],
     product: {} as Product,
     products: [] as Product[],
     productTableHeaders: [
@@ -31,14 +33,20 @@ export default new Vuex.Store({
   },
   getters: {
     product: (state) => state.product,
-    products: (state) => state.products,
+    products: (state) => {
+      return state.products.map((product) => {
+        const summary = product.price * product.quantity
+        return { ...product, summary }
+      })
+    },
     productTableHeaders: (state) => state.productTableHeaders,
     selectedProducts: (state) => state.selectedProducts,
     total: (state) => {
-      state.products.reduce((total: number, product: Product) => {
+      return state.products.reduce((total: number, product: Product) => {
         return total + product.price * product.quantity
       }, 0)
     },
+    notifications: (state) => state.notifications,
   },
   mutations: {
     SET_PRODUCTS(state, products: Product[]) {
@@ -50,6 +58,9 @@ export default new Vuex.Store({
     CLEAR_PRODUCT(state) {
       state.product = {} as Product
     },
+    ADD_NOTIFICATION(state, notification: NotificationType) {
+      state.notifications.push(notification)
+    },
   },
   actions: {
     async getAllProducts({ commit }) {
@@ -57,22 +68,27 @@ export default new Vuex.Store({
       commit('SET_PRODUCTS', products)
     },
 
-    async addProduct({ commit }, product: Product) {
-      const newProduct = await addProduct(product)
+    async addProduct({ commit, dispatch }, product: Product) {
+      const newProduct = await addProduct(product).catch((error) => {
+        commit('ADD_NOTIFICATION', {
+          type: 'error',
+          message: error.response.data.message,
+        })
+      })
       commit('ADD_PRODUCT', newProduct)
+      await dispatch('addNotification', {
+        type: 'success',
+        message: 'Product added successfully',
+      })
     },
 
-    clearProduct({ commit }) {
-      commit('CLEAR_PRODUCT')
+    async deleteProducts({ dispatch }, products: Product[]) {
+      const status = await deleteProducts(products)
+      if (status) await dispatch('getAllProducts')
     },
-    async calculateSummaryForEachItem(context, product: Product): Promise<number> {
-      return product.price * product.quantity
+    addNotification({ commit }, notification: NotificationType) {
+      commit('ADD_NOTIFICATION', notification)
     },
-    // calculateSummaryForEachItem({ state }) {
-    //   state.products.forEach((product: Product) => {
-    //     product.summary = product.price * product.quantity
-    //   })
-    // },
   },
   modules: {},
 })
