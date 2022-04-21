@@ -3,6 +3,11 @@ Simple invoice calculator written in [Javascript](https://developer.mozilla.org/
 [Vue.JS](https://https://vuejs.org/), [Vuex](https://vuex.vuejs.org/), [Vuetify](https://vuetifyjs.com/), 
 [TypeScript](https://www.typescriptlang.org/)
 
+## Pre-Requests
+```
+  1. NodeJS (14.17.3)
+  2. @vue/cli (5.0.4)
+```
 ## Project setup
 ```
 1. yarn install
