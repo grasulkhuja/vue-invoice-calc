@@ -1,13 +1,19 @@
-# vue-invoice-calc
+# Invoice calculator
+Simple invoice calculator written in [Javascript](https://developer.mozilla.org/en-US/docs/Web/JavaScript) using 
+[Vue.JS](https://https://vuejs.org/), [Vuex](https://vuex.vuejs.org/), [Vuetify](https://vuetifyjs.com/), 
+[TypeScript](https://www.typescriptlang.org/)
 
 ## Project setup
 ```
-yarn install
+1. yarn install
+2. yarn global add json-server
 ```
 
-### Compiles and hot-reloads for development
+### To run application
 ```
-yarn serve
+1. yarn serve
+2. yarn server
+3. Open browser and go to http://localhost:8080/
 ```
 
 ### Compiles and minifies for production
@@ -15,10 +21,3 @@ yarn serve
 yarn build
 ```
 
-### Lints and fixes files
-```
-yarn lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
