@@ -67,7 +67,10 @@
               disable-pagination
               hide-default-footer
               show-select
-            />
+            >
+              <template v-slot:[`item.quantity`]="{ item }"> $ {{ item.quantity }} </template>
+              <template v-slot:[`item.summary`]="{ item }"> $ {{ item.summary }} </template>
+            </v-data-table>
             <v-card-actions>
               <v-btn outlined :disabled="!selectedProducts.length" @click.prevent="deleteProducts">
                 Delete

@@ -82,9 +82,18 @@ export default new Vuex.Store({
       })
     },
 
-    async deleteProducts({ dispatch }, products: Product[]) {
-      const status = await deleteProducts(products)
-      if (status) await dispatch('getAllProducts')
+    async deleteProducts({ commit, dispatch }, products: Product[]): Promise<void> {
+      await deleteProducts(products).catch((error) => {
+        commit('ADD_NOTIFICATION', {
+          type: 'error',
+          message: error.response.data.message,
+        })
+      })
+      await dispatch('getAllProducts')
+      await dispatch('addNotification', {
+        type: 'success',
+        message: 'Product added successfully',
+      })
     },
     addNotification({ commit }, notification: NotificationType) {
       commit('ADD_NOTIFICATION', notification)
