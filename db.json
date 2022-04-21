@@ -19,10 +19,28 @@
       "price": 300
     },
     {
-      "name": "iPhone 13",
-      "price": "11111",
-      "quantity": "1",
+      "name": "Product 4",
+      "price": "400",
+      "quantity": "40",
       "id": 4
+    },
+    {
+      "name": "Product 5",
+      "price": "500",
+      "quantity": "50",
+      "id": 5
+    },
+    {
+      "name": "Product 6",
+      "price": "600",
+      "quantity": "60",
+      "id": 6
+    },
+    {
+      "name": "Product 7",
+      "price": "700",
+      "quantity": "70",
+      "id": 7
     }
   ]
 }
