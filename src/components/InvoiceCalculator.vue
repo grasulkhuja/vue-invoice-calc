@@ -68,7 +68,7 @@
               hide-default-footer
               show-select
             >
-              <template v-slot:[`item.quantity`]="{ item }"> $ {{ item.quantity }} </template>
+              <template v-slot:[`item.price`]="{ item }"> $ {{ item.price }} </template>
               <template v-slot:[`item.summary`]="{ item }"> $ {{ item.summary }} </template>
             </v-data-table>
             <v-card-actions>
@@ -146,7 +146,8 @@ export default (
       await this.$store.dispatch('addProduct', this.product)
       await this.$store.commit('CLEAR_PRODUCT')
       this.$refs.observer.reset()
-      this.$store.dispatch('addNotification', {
+      await this.$store.dispatch('addNotification', {
+        show: true,
         type: 'success',
         message: 'Product added successfully',
       })
