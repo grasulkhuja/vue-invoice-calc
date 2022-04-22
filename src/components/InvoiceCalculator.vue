@@ -146,7 +146,8 @@ export default (
       await this.$store.dispatch('addProduct', this.product)
       await this.$store.commit('CLEAR_PRODUCT')
       this.$refs.observer.reset()
-      this.$store.dispatch('addNotification', {
+      await this.$store.dispatch('addNotification', {
+        show: true,
         type: 'success',
         message: 'Product added successfully',
       })

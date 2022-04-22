@@ -71,12 +71,14 @@ export default new Vuex.Store({
     async addProduct({ commit, dispatch }, product: Product) {
       const newProduct = await addProduct(product).catch((error) => {
         commit('ADD_NOTIFICATION', {
+          show: true,
           type: 'error',
           message: error.response.data.message,
         })
       })
       commit('ADD_PRODUCT', newProduct)
       await dispatch('addNotification', {
+        show: true,
         type: 'success',
         message: 'Product added successfully',
       })
@@ -85,12 +87,14 @@ export default new Vuex.Store({
     async deleteProducts({ commit, dispatch }, products: Product[]): Promise<void> {
       await deleteProducts(products).catch((error) => {
         commit('ADD_NOTIFICATION', {
+          show: true,
           type: 'error',
           message: error.response.data.message,
         })
       })
       await dispatch('getAllProducts')
       await dispatch('addNotification', {
+        show: true,
         type: 'success',
         message: 'Product added successfully',
       })
