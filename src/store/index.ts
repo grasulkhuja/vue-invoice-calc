@@ -96,7 +96,7 @@ export default new Vuex.Store({
       await dispatch('addNotification', {
         show: true,
         type: 'success',
-        message: 'Product added successfully',
+        message: 'Product deleted successfully',
       })
     },
     addNotification({ commit }, notification: NotificationType) {
