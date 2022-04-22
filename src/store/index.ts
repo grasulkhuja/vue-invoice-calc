@@ -63,8 +63,13 @@ export default new Vuex.Store({
     },
   },
   actions: {
-    async getAllProducts({ commit }) {
+    async getAllProducts({ commit, dispatch }) {
       const products = await getAllProducts()
+      await dispatch('addNotification', {
+        show: true,
+        type: 'success',
+        message: 'Products loaded successfully',
+      })
       commit('SET_PRODUCTS', products)
     },
 
@@ -96,7 +101,7 @@ export default new Vuex.Store({
       await dispatch('addNotification', {
         show: true,
         type: 'success',
-        message: 'Product added successfully',
+        message: 'Product deleted successfully',
       })
     },
     addNotification({ commit }, notification: NotificationType) {
